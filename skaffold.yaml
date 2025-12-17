@@ -1,0 +1,76 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/*
+      - ./infra/k8s-dev/*
+build:
+  local:
+    push: false
+  artifacts:
+    - image: 20011005/users
+      context: users
+      docker:
+        dockerfile: dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: 20011005/reset-password
+      context: reset-password
+      docker:
+        dockerfile: dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: 20011005/shifts
+      context: shifts
+      docker:
+        dockerfile: dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: 20011005/client
+      context: classify-final
+      docker:
+        dockerfile: dockerfile
+      sync:
+        manual:
+          - src: "app/**/*.tsx"
+            dest: .
+    - image: 20011005/subjects
+      context: subjects
+      docker:
+        dockerfile: dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: 20011005/courses
+      context: courses
+      docker: 
+        dockerfile: dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: "src/**/*.ts"
+    - image: 20011005/attendance
+      context: attendance
+      docker: 
+        dockerfile: dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: "src/**/*.ts"
+    - image: 20011005/materials
+      context: materials
+      docker: 
+        dockerfile: dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: "src/**/*.ts"
+    

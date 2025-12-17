@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subjects-depl
+spec:
+  selector:
+    matchLabels:
+      app: subjects
+  template:
+    metadata:
+      labels:
+        app: subjects
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z subjects-mysql-srv 3306; do
+                echo "Waiting for MySQL at subjects-mysql-srv:3306...";
+                sleep 5;
+              done;
+      containers:
+        - name: subjects
+          image: 20011005/subjects
+          env:
+            - name: MYSQL_HOST
+              value: subjects-mysql-srv
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: classify
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: RabbitMQ_URL
+              value: "amqp://admin:password@rabbitmq-srv:5672"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: subjects-srv
+spec:
+  selector:
+    app: subjects
+  type: ClusterIP
+  ports:
+  - name: db
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
+
+ 

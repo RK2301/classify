@@ -1,0 +1,72 @@
+import { StudentAttributes, UserRole } from "@rkh-ms/classify-lib";
+
+export const sampleStudents: StudentAttributes[] = [{
+    id: '123456789',
+    firstName: 'Rami',
+    lastName: 'Khattab',
+    email: 'rami.khattab0@gmail.com',
+    grade: 10,
+    fatherName: 'Ahmed',
+    motherName: 'Alaa',
+    phone: '0543957965',
+    motherPhone: '0543957965',
+    fatherPhone: '0543957965',
+    version: 1,
+    role: UserRole.Student
+}, {
+    id: '123456788',
+    firstName: 'Mark',
+    lastName: 'Josan',
+    email: 'mark.josan@gmail.com',
+    grade: 7,
+    fatherName: 'Henry',
+    motherName: 'Jessica',
+    version: 1,
+    role: UserRole.Student
+}, {
+    id: '123456787',
+    firstName: 'John',
+    lastName: 'Cena',
+    email: 'john.cena@outlook.com',
+    grade: 11,
+    fatherName: 'David',
+    version: 1,
+    role: UserRole.Student
+}, {
+    id: '123456786',
+    firstName: 'Ahmed',
+    lastName: 'Alsarea',
+    email: 'ahmed.alsarea@outlook.com',
+    grade: 6,
+    fatherName: 'Khaled',
+    version: 1,
+    role: UserRole.Student
+}, {
+    id: '123456785',
+    firstName: 'Steve',
+    lastName: 'Jobs',
+    email: 'steve.jobs@google.com',
+    grade: 3,
+    fatherName: 'Ali',
+    version: 1,
+    role: UserRole.Student
+}, {
+    id: '123456784',
+    firstName: 'Bale',
+    lastName: 'Gates',
+    email: 'bale.gates@microsoft.com',
+    grade: 5,
+    fatherName: 'Mate',
+    version: 1,
+    role: UserRole.Student
+}, {
+    id: '123456783',
+    firstName: 'Lee',
+    lastName: 'Jae-yong',
+    email: 'lee.yong@samsung.com',
+    grade: 9,
+    fatherName: 'Jae',
+    motherName: 'Lee',
+    version: 1,
+    role: UserRole.Student
+}]

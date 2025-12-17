@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z users-mysql-srv 3306; do
+                echo "Waiting for MySQL at reset-password-mysql-srv:3306...";
+                sleep 5;
+              done;
+      containers:
+        - name: users
+          image: 20011005/users
+          env:
+            - name: MYSQL_HOST
+              value: users-mysql-srv
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: classify
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: RabbitMQ_URL
+              value: "amqp://admin:password@rabbitmq-srv:5672"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-srv
+spec:
+  selector:
+    app: users
+  type: ClusterIP
+  ports:
+    - name: db
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

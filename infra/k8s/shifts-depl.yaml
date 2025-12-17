@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shifts-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shifts
+  template:
+    metadata:
+      labels:
+        app: shifts
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z shifts-mysql-srv 3306; do
+                echo "Waiting for MySQL at shifts-mysql-srv:3306...";
+                sleep 5;
+              done;
+      containers:
+        - name: shifts
+          image: 20011005/shifts
+          env:
+            - name: MYSQL_HOST
+              value: shifts-mysql-srv
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: classify
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: RabbitMQ_URL
+              value: "amqp://admin:password@rabbitmq-srv:5672"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shifts-srv
+spec:
+  selector:
+    app: shifts
+  type: ClusterIP
+  ports:
+    - name: db
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

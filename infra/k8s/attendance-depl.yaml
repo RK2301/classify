@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: attendance-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: attendance
+  template:
+    metadata:
+      labels:
+        app: attendance
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z attendance-mysql-srv 3306; do
+                echo "Waiting for MySQL at attendance-mysql-srv:3306...";
+                sleep 5;
+              done;
+      containers:
+        - name: attendance
+          image: 20011005/attendance
+          env:
+            - name: MYSQL_HOST
+              value: attendance-mysql-srv
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: classify
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: RabbitMQ_URL
+              value: "amqp://admin:password@rabbitmq-srv:5672"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: attendance-srv
+spec:
+  selector:
+    app: attendance
+  type: ClusterIP
+  ports:
+  - port: 3000
+    targetPort: 3000

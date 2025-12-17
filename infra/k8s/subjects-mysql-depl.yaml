@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: subjects-mysql-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subjects-mysql-depl
+spec:
+  selector:
+    matchLabels:
+      app: subjects-mysql
+  template:
+    metadata:
+      labels:
+        app: subjects-mysql
+    spec:
+      volumes:
+        - name: subjects-mysql-storage
+          persistentVolumeClaim:
+            claimName: subjects-mysql-pvc
+            
+      containers:
+        - name: subjects-mysql
+          image: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: classify
+          ports:
+          - containerPort: 3306
+          volumeMounts:
+            - name: subjects-mysql-storage
+              mountPath: /var/lib/mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: subjects-mysql-srv
+spec:
+  selector:
+    app: subjects-mysql
+  type: ClusterIP
+  ports:
+  - name: db
+    port: 3306
+    targetPort: 3306
+    protocol: TCP 

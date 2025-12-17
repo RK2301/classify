@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: materials-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: materials
+  template:
+    metadata:
+      labels:
+        app: materials
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z materials-mysql-srv 3306; do
+                echo "Waiting for MySQL at materials-mysql-srv:3306...";
+                sleep 5;
+              done;
+      containers:
+        - name: materials
+          image: 20011005/materials
+          env:
+            - name: MYSQL_HOST
+              value: materials-mysql-srv
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: classify
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: RabbitMQ_URL
+              value: "amqp://admin:password@rabbitmq-srv:5672"
+            - name: FIREBASE_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: firebase-config
+                  key: FIREBASE_CONFIG
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: materials-srv
+spec:
+  selector:
+    app: materials
+  type: ClusterIP
+  ports:
+  - port: 3000
+    targetPort: 3000

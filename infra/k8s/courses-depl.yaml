@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: courses-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: courses
+  template:
+    metadata:
+      labels:
+        app: courses
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z courses-mysql-srv 3306; do
+                echo "Waiting for MySQL at courses-mysql-srv:3306...";
+                sleep 5;
+              done;
+      containers:
+        - name: courses
+          image: 20011005/courses
+          env:
+            - name: MYSQL_HOST
+              value: courses-mysql-srv
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: classify
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: RabbitMQ_URL
+              value: "amqp://admin:password@rabbitmq-srv:5672"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: courses-srv
+spec:
+  selector:
+    app: courses
+  type: ClusterIP
+  ports:
+  - port: 3000
+    targetPort: 3000
