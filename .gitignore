@@ -8,3 +8,5 @@ dist/
 classify-final/
 classify-lib/
 general/
+
+infra/k8s/client-depl.yaml
