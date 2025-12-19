@@ -1,5 +1,10 @@
 import request from "supertest";
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(timezone)
+dayjs.extend(utc)
+
 import { app } from "../../../app";
 
 import { API } from "@rkh-ms/classify-lib/api";
@@ -290,14 +295,18 @@ it("Return error when new lesson time collide with other lesson related to the c
 
     const lesson1 = lessons[0].dataValues
     const lesson2 = lessons[1].dataValues
+    
+    // times must be converted to Asia/Jerusalem timezone
+    // as later hour:minutes will be consider by the route handler as Asia/Jerusalem times
+    const lesson2StartTime = dayjs(lesson2!.startTime).tz('Asia/Jerusalem')
 
     // set lessons 1 times to collide with lesson 2
     // then make request to update lesson 1
     await makeRequest({
         id: lesson1.id,
-        date: dayjs(lesson2.startTime).format('YYYY-MM-DD'),
-        startTime: dayjs(lesson2.startTime).add(1, 'minute').format('HH:mm'),
-        endTime: dayjs(lesson2.endTime).format('HH:mm')
+        date: dayjs(lesson2StartTime).format('YYYY-MM-DD'),
+        startTime: dayjs(lesson2StartTime).add(1, 'minute').format('HH:mm'),
+        endTime: dayjs(lesson2!.endTime).tz('Asia/Jerusalem').format('HH:mm')
     })
         .expect(400)
 })
@@ -312,15 +321,18 @@ it("Update lesson successfully", async () => {
 
 
     // change lesson start time
-    const newStartTime = dayjs(lesson!.dataValues.startTime).add(5, 'minute')
-        .format('HH:mm')
+    // time format will be consider in route handler as Asia/Jerusalem
+    // so it's important to convert to that timezone as tests may 
+    // run on server not in that timezone
+    const newStartTime = dayjs(lesson!.dataValues.startTime).tz('Asia/Jerusalem')
+    .add(5, 'minute').format('HH:mm')
 
     // make request to update the lesson
     await makeRequest({
         id: lesson!.dataValues.id,
         startTime: newStartTime,
-        endTime: dayjs(lesson!.dataValues.endTime).format('HH:mm'),
-        date: dayjs(lesson!.dataValues.startTime).format('YYYY-MM-DD')
+        endTime: dayjs(lesson!.dataValues.endTime).tz('Asia/Jerusalem').format('HH:mm'),
+        date: dayjs(lesson!.dataValues.startTime).tz('Asia/Jerusalem').format('YYYY-MM-DD')
     })
         .expect(200)
 

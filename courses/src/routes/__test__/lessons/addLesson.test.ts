@@ -1,5 +1,9 @@
 import request from "supertest";
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(timezone)
+dayjs.extend(utc)
 
 import { ErrorAttr } from "@rkh-ms/classify-lib/errors";
 import { LessonKeys, Sort } from "@rkh-ms/classify-lib/enums";
@@ -156,12 +160,22 @@ it('Return error after try to add lesson that collide with another lesson', asyn
     const lesson = await Lesson.findOne()
     expect(lesson).not.toBeNull()
 
+    /**When pass hour:mintues for add lesson handler
+     * the route will consider them as Asia/Jerusalem
+     * so times must be converted from the beginning
+     * and not depend on server local time when run the tests
+     */
+    const lessonStartTime = dayjs(lesson?.dataValues!.startTime).tz('Asia/Jerusalem')
+    const lessonEndTime = dayjs(lesson?.dataValues!.endTime).tz('Asia/Jerusalem')
+
+    const newDate = lessonStartTime.format('YYYY-MM-DD')
+
     // now try make request to add new lesson
     // and submit times that collide with the given lesson
     await makeRequest({
         course_id: lesson!.dataValues.course_id,
-        date: dayjs(lesson!.dataValues.startTime).format('YYYY-MM-DD'),
-        startTime: dayjs(lesson!.dataValues.startTime).add(1, 'minute').format('HH:mm'),
+        date: newDate,
+        startTime: lessonStartTime.add(1, 'minute').format('HH:mm'),
         endTime: '23:59'
     })
         .expect(400)
@@ -170,9 +184,9 @@ it('Return error after try to add lesson that collide with another lesson', asyn
     // now try to set end time, before the actual lesson end time
     await makeRequest({
         course_id: lesson!.dataValues.course_id,
-        date: dayjs(lesson!.dataValues.startTime).format('YYYY-MM-DD'),
+        date: newDate,
         startTime: '00:00',
-        endTime: dayjs(lesson!.dataValues.endTime).subtract(1, 'minute').format('HH:mm')
+        endTime: lessonEndTime.subtract(1, 'minute').format('HH:mm')
     })
         .expect(400)
 
@@ -181,9 +195,9 @@ it('Return error after try to add lesson that collide with another lesson', asyn
     // and start time, before the actual lesson start
     await makeRequest({
         course_id: lesson!.dataValues.course_id,
-        date: dayjs(lesson!.dataValues.startTime).format('YYYY-MM-DD'),
-        startTime: dayjs(lesson!.dataValues.startTime).subtract(1, 'minute').format('HH:mm'),
-        endTime: dayjs(lesson!.dataValues.endTime).add(1, 'minute').format('HH:mm')
+        date: newDate,
+        startTime: lessonStartTime.subtract(1, 'minute').format('HH:mm'),
+        endTime: lessonEndTime.add(1, 'minute').format('HH:mm')
     })
         .expect(400)
 })

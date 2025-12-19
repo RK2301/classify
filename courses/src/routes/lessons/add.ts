@@ -80,7 +80,6 @@ router.post(API.lessons.main,
 
             // 4.1 check if end date of the course must be updated
             if (dayjs(date).diff(dayjs(course.dataValues.endDate), 'day') >= 1) {
-                console.log('need to change course end date');
 
                 course.set({
                     [CourseKeys.END_DATE]: date

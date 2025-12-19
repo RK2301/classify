@@ -193,7 +193,7 @@ router.get(API.courses.main,
                 distinct: true
             })
 
-            console.log(`Courses to be sent: ${courses.rows.length}`);
+            // console.log(`Courses to be sent: ${courses.rows.length}`);
 
 
             // success response

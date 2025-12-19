@@ -65,15 +65,15 @@ beforeAll(async () => {
     // add some students to the DB
     await User.bulkCreate(sampleStudents)
     await Student.bulkCreate(sampleStudents)
-    console.log(`*** ${sampleStudents.length} students added to the DB ***`);
+    // console.log(`*** ${sampleStudents.length} students added to the DB ***`);
 
 
     // add some teachers to the DB
     await User.bulkCreate(sampleTeachers)
     await Teacher.bulkCreate(sampleTeachers)
-    console.log(`*** ${sampleTeachers.length} teachers added to the DB ***`);
+    // console.log(`*** ${sampleTeachers.length} teachers added to the DB ***`);
 
-    console.log("*** Test setup is ready ***");
+    // console.log("*** Test setup is ready ***");
 
 });
 
