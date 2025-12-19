@@ -69,7 +69,6 @@ router.get('/api/shifts',
             order: [['startTime', 'DESC']]
         })
 
-        // 6. response with pagination support
         res.json(shifts)
     }
 )

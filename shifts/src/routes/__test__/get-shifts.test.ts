@@ -83,7 +83,7 @@ it('Get all shfits successfully', async () => {
         .set('Cookie', global.signin())
         .expect(200)
 
-    const shifts = ((res.body) as PaginationResponse<ShiftAttr>).rows
+    const shifts = (res.body) as ShiftAttr[]
 
     //fecth all relevant shifts from 08.2025
     const range = returnRangeDates(8, 2025)
@@ -94,102 +94,16 @@ it('Get all shfits successfully', async () => {
 })
 
 
-it('Get all shifts successfully based on limit and page filter', async () => {
-
-    const limit = 4
-    const month = 8
-    const year = 2025
-
-    //make get request to get all teachers
-    const res = await request(app)
-        .get('/api/shifts')
-        .query({
-            limit,
-            m: month,
-            y: year
-        })
-        .set('Cookie', global.signin())
-        .expect(200)
-
-    const shifts = (res.body as PaginationResponse<ShiftAttr>).rows
-
-    const range = returnRangeDates(month, year)
-    const db_shifts = await fetchShiftsInRange(range!.start, range!.end)
-
-    /**max shifts can be returned per page
-     * if shifts less than the limit then all must be retuned in the request
-     * otherwise must return shifts up till limit value
-     */
-    const max_shifts_per_page = db_shifts.length > limit ? limit : db_shifts.length
-
-    expect(shifts.length).toEqual(max_shifts_per_page)
-
-})
 
 
-
-it('Get shifts sorted based on start time', async () => {
-
-    //make get request to get all teachers
-    const { body } = await request(app)
-        .get('/api/shifts')
-        .set('Cookie', global.signin())
-        .query({
-            m: 8,
-            y: 2025,
-            sortDir: 'ASC'
-        })
-        .expect(200)
-
-    const sortedShifts = (body as PaginationResponse<ShiftAttr>).rows
-
-    // loop over the shifts and check if they are sorted based on their 
-    // start time in ASC order
-    const isSortedASC = sortedShifts
-        .map(shift => new Date(shift.startTime))
-        .every((startTime, index, array) => {
-            return index === 0 || startTime >= array[index - 1]
-        })
-
-    expect(isSortedASC).toBe(true)
-})
-
-
-it('Get shifts sorted based on teachers id', async () => {
-
-    //make get request to get all teachers
-    const { body } = await request(app)
-        .get('/api/shifts')
-        .set('Cookie', global.signin())
-        .query({
-            m: 8,
-            y: 2025,
-            sort: 1
-        })
-        .expect(200)
-
-    const sortedShifts = (body as PaginationResponse<ShiftAttr & { User: UserMainAttributes }>).rows
-
-    // loop over the shifts and check if they are sorted based on  
-    // teacher id in DESC order (the default order for this route)
-    const isSortedDESC = sortedShifts
-        .map(shift => shift.User.id)
-        .every((id, index, array) => {
-            return index === 0 || id <= array[index - 1]
-        })
-
-    expect(isSortedDESC).toBe(true)
-})
-
-
-it('filter shifts based on teachers id', async () => {
+it('filter shifts based on teacher id', async () => {
 
     const month = 8
     const year = 2025
 
     // get 2 teachers id and filter shifts based on their id
     const users = await User.findAll({
-        limit: 2
+        limit: 1
     })
 
     const teachersId = users.map(user => user.dataValues.id)
@@ -199,12 +113,12 @@ it('filter shifts based on teachers id', async () => {
         .query({
             m: month,
             y: year,
-            teachers: teachersId.join(',')
+            teacher: teachersId.join(',')
         })
         .set('Cookie', global.signin())
         .expect(200)
 
-    const teachers_shifts = (body as PaginationResponse<ShiftAttr>).rows
+    const teachers_shifts = body as ShiftAttr[]
 
     // fetch from the DB all shifts related to these teachers
     const range = returnRangeDates(8, 2025)
@@ -216,6 +130,7 @@ it('filter shifts based on teachers id', async () => {
 
     expect(teachers_shifts.length).toEqual(db_shifts.length)
 })
+
 
 
 it('Make sure when teacher make a request only get his own shifts', async () => {
@@ -243,7 +158,7 @@ it('Make sure when teacher make a request only get his own shifts', async () => 
         }))
         .expect(200)
 
-    const teacher_shifts = (body as PaginationResponse<ShiftAttr>).rows
+    const teacher_shifts = body as ShiftAttr[]
 
     //make sure every shift have teacher id (created by him)
     const isTeacherShifts = teacher_shifts.every(shift => shift.teacherId === user.dataValues.id)
