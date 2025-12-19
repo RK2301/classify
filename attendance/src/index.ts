@@ -91,5 +91,5 @@ const startRabbitMQ = async () => {
 app.listen(3000, async () => {
     await start()
     await startRabbitMQ()
-    console.log('Attendance service listen on port 3000');
+    console.log('Attendance service listen on port 3000!!!');
 })
