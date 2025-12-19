@@ -339,6 +339,6 @@ it("Update lesson successfully", async () => {
     // reload the lesson and check if the time changed
     await lesson?.reload()
 
-    expect(dayjs(lesson!.dataValues.startTime).format('HH:mm')).toEqual(newStartTime)
+    expect(dayjs(lesson!.dataValues.startTime).tz('Asia/Jerusalem').format('HH:mm')).toEqual(newStartTime)
     expect(rabbitMQ_Wrapper.channel.publish).toHaveBeenCalledTimes(1)
 })
