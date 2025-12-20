@@ -1,6 +1,8 @@
 name: tests-courses
 on:
-  pull_request
+  pull_request:
+      paths:
+          - 'courses/**'
 
 jobs:
   build:

@@ -1,6 +1,8 @@
 name: tests-shifts
 on:
-  pull_request
+  pull_request:
+      paths:
+          - 'shifts/**'
 
 jobs:
   build:

@@ -1,6 +1,8 @@
 name: tests-attendance
 on:
-  pull_request
+  pull_request:
+      paths:
+          - 'attendance/**'
 
 jobs:
   build:
