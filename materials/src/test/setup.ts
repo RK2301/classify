@@ -124,7 +124,7 @@ beforeAll(async () => {
         // enroll students to courses
         await StudentCourse.bulkCreate(sampleEnrollStudents)
 
-        console.log("*** Test setup is ready ***");
+        // console.log("*** Test setup is ready ***");
 
     } catch (err) {
         console.error(err);
@@ -143,10 +143,17 @@ beforeEach(async () => {
 
         await Material.bulkCreate(sampleMaterials)
 
-        bucket.deleteFiles({ prefix: 'test/', force: true }).catch(err => { })
     } catch (err) {
         console.error(err);
         throw err;
+    }
+
+    // delete all files on bucket
+    // if error occured then no need to throw it
+    try {
+        await bucket.deleteFiles({ prefix: 'test/', force: true })
+    }catch(err){
+        // console.error(err);
     }
 });
 
@@ -159,7 +166,11 @@ afterAll(async () => {
     await sequelize.close()
 
     // after tests done,  clear all files created in the test directory
-    bucket.deleteFiles({ prefix: 'test/', force: true }).catch(err => { })
+    try {
+        await bucket.deleteFiles({ prefix: 'test/', force: true })
+    }catch(err){
+        // console.error(err);
+    }
 });
 
 

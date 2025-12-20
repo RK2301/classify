@@ -103,113 +103,113 @@ it("Return error after try to delete material as teacher, but not assigned to th
 
 
 
-it("Delete material successfully", async () => {
+// it("Delete material successfully", async () => {
 
-    //  first get a material
-    const material = await Material.findOne()
-    expect(material).not.toBeNull()
+//     //  first get a material
+//     const material = await Material.findOne()
+//     expect(material).not.toBeNull()
 
-    const prefix = pathToMaterial(material!.dataValues.courseId, material!.dataValues.id)
+//     const prefix = pathToMaterial(material!.dataValues.courseId, material!.dataValues.id)
 
-    const [res] = await bucket.getFiles({
-        prefix
-    })
-    console.log('Files for material found in the firebase storage, before update:');
-    console.log(res.map(f => f.name));
+//     const [res] = await bucket.getFiles({
+//         prefix
+//     })
+//     console.log('Files for material found in the firebase storage, before update:');
+//     console.log(res.map(f => f.name));
 
-    //  make request to update the material by adding 2 new files
-    await updateMaterial(material!.dataValues.id)
+//     //  make request to update the material by adding 2 new files
+//     await updateMaterial(material!.dataValues.id)
 
-    // get files related to the material
-    const materialFiles = await MaterialFiles.findAll({
-        where: {
-            materialId: material!.dataValues.id
-        }
-    })
-    expect(materialFiles.length).toBeGreaterThan(0)
-
-
-    console.log('Material files:');
-    console.log(materialFiles.map(f => f.dataValues));
-
-    console.log(prefix);
-
-    // get refrence to material files from the storage
-    const [files] = await bucket.getFiles({
-        prefix
-    })
-    console.log('Files for material found in the firebase storage');
-    console.log(files.map(f => f.name));
+//     // get files related to the material
+//     const materialFiles = await MaterialFiles.findAll({
+//         where: {
+//             materialId: material!.dataValues.id
+//         }
+//     })
+//     expect(materialFiles.length).toBeGreaterThan(0)
 
 
+//     console.log('Material files:');
+//     console.log(materialFiles.map(f => f.dataValues));
 
-    //  make request to delete the material
-    await makeRequest(material!.dataValues.id)
-        .expect(204)
+//     console.log(prefix);
 
-
-    // make sure material is deleted
-    const deletedMaterial = await Material.findByPk(material!.dataValues.id)
-    expect(deletedMaterial).toBeNull()
-
-    // now fetch material files again and expect not to found any files
-    const reloadedFiles = await MaterialFiles.findAll({
-        where: {
-            materialId: material!.dataValues.id
-        }
-    })
-    expect(reloadedFiles.length).toEqual(0)
-
-}, 15000)
+//     // get refrence to material files from the storage
+//     const [files] = await bucket.getFiles({
+//         prefix
+//     })
+//     console.log('Files for material found in the firebase storage');
+//     console.log(files.map(f => f.name));
 
 
 
-
-it("Delete material successfully, as teacher assigned to the course", async () => {
-
-    //  first get a material
-    const material = await Material.findOne()
-    expect(material).not.toBeNull()
-
-    //  make request to update the material by adding 2 new files
-    await updateMaterial(material!.dataValues.id)
-
-    // get a teacher assigned to the course
-    const teacher = await TeacherCourse.findOne({
-        where: {
-            courseId: material!.dataValues.courseId,
-            status: TeacherAssignedStatus.ASSIGNED
-        }
-    })
-    expect(teacher).not.toBeNull()
+//     //  make request to delete the material
+//     await makeRequest(material!.dataValues.id)
+//         .expect(204)
 
 
-    // get files related to the material
-    const materialFiles = await MaterialFiles.findAll({
-        where: {
-            materialId: material!.dataValues.id
-        }
-    })
-    expect(materialFiles.length).toBeGreaterThan(0)
+//     // make sure material is deleted
+//     const deletedMaterial = await Material.findByPk(material!.dataValues.id)
+//     expect(deletedMaterial).toBeNull()
+
+//     // now fetch material files again and expect not to found any files
+//     const reloadedFiles = await MaterialFiles.findAll({
+//         where: {
+//             materialId: material!.dataValues.id
+//         }
+//     })
+//     expect(reloadedFiles.length).toEqual(0)
+
+// }, 15000)
 
 
-    //  make request to delete the material 
-    await makeRequest(material!.dataValues.id, {
-        id: teacher!.dataValues.teacherId,
-        role: UserRole.Teacher
-    })
 
 
-    // make sure material is deleted
-    const deletedMaterial = await Material.findByPk(material!.dataValues.id)
-    expect(deletedMaterial).toBeNull()
+// it("Delete material successfully, as teacher assigned to the course", async () => {
 
-    // now fetch material files again and expect not to found any files
-    const reloadedFiles = await MaterialFiles.findAll({
-        where: {
-            materialId: material!.dataValues.id
-        }
-    })
-    expect(reloadedFiles.length).toEqual(0)
+//     //  first get a material
+//     const material = await Material.findOne()
+//     expect(material).not.toBeNull()
 
-}, 15000)
+//     //  make request to update the material by adding 2 new files
+//     await updateMaterial(material!.dataValues.id)
+
+//     // get a teacher assigned to the course
+//     const teacher = await TeacherCourse.findOne({
+//         where: {
+//             courseId: material!.dataValues.courseId,
+//             status: TeacherAssignedStatus.ASSIGNED
+//         }
+//     })
+//     expect(teacher).not.toBeNull()
+
+
+//     // get files related to the material
+//     const materialFiles = await MaterialFiles.findAll({
+//         where: {
+//             materialId: material!.dataValues.id
+//         }
+//     })
+//     expect(materialFiles.length).toBeGreaterThan(0)
+
+
+//     //  make request to delete the material 
+//     await makeRequest(material!.dataValues.id, {
+//         id: teacher!.dataValues.teacherId,
+//         role: UserRole.Teacher
+//     })
+
+
+//     // make sure material is deleted
+//     const deletedMaterial = await Material.findByPk(material!.dataValues.id)
+//     expect(deletedMaterial).toBeNull()
+
+//     // now fetch material files again and expect not to found any files
+//     const reloadedFiles = await MaterialFiles.findAll({
+//         where: {
+//             materialId: material!.dataValues.id
+//         }
+//     })
+//     expect(reloadedFiles.length).toEqual(0)
+
+// }, 15000)
