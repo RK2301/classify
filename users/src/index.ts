@@ -73,5 +73,5 @@ app.listen(3000, async () => {
     await start()
     await startRabbitMQ()
     defaultManager('211509237', 'Rami', 'Khattab', 'rami.khattab0@gmail.com');
-    console.log("Users Service Listening on port 3000");
+    console.log("Users Service Listening on port 3000 !!");
 })
