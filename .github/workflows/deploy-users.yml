@@ -15,5 +15,5 @@ jobs:
       -  run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
          env:
            DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-           DOCKER_PASWORD: ${{secrets.DOCKER_PASSWORD}}
+           DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       - run: docker push 20011005/users
