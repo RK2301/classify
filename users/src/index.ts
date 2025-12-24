@@ -72,6 +72,9 @@ const startRabbitMQ = async () => {
 app.listen(3000, async () => {
     await start()
     await startRabbitMQ()
-    defaultManager('211509237', 'Rami', 'Khattab', 'rami.khattab0@gmail.com');
+
+    // wait for 30 seconds to create the default manager
+    setTimeout(() => defaultManager('123456789', 'Rami', 'Khattab', 'rami.khattab0@gmail.com'), 30000) ;
+
     console.log("Users Service Listening on port 3000 !!");
 })

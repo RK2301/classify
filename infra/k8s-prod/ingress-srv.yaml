@@ -1,0 +1,85 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"   # <– allow up to 50MB uploads
+#    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: classify.dev
+      http:
+        paths:
+          - path: /api/materials/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: materials-srv
+                port:
+                  number: 3000
+          - path: /api/courses/[^/]+/materials(/.*)?
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: materials-srv
+                port:
+                  number: 3000
+          - path: /api/lessons/[^/]+/attendance(/.*)?
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: attendance-srv
+                port:
+                  number: 3000
+          - path: /api/courses/[^/]+/students/[^/]+/attendance(/.*)?
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: attendance-srv
+                port:
+                  number: 3000
+          - path: /api/attendance/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: attendance-srv
+                port:
+                  number: 3000
+          - path: /api/users/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: users-srv
+                port:
+                  number: 3000
+          - path: /api/reset-password/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: reset-password-srv
+                port:
+                  number: 3000
+          - path: /api/shifts/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: shifts-srv
+                port:
+                  number: 3000
+          - path: /api/subjects/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: subjects-srv
+                port:
+                  number: 3000
+          - path: /api/courses/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service: 
+                name: courses-srv
+                port:
+                  number: 3000
+          

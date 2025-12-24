@@ -8,12 +8,12 @@ import { Lesson } from '../models/Lesson';
 import { sequelize } from '../connect';
 import { LessonsStatusChangedPublisher } from '../rabbit_mq/publishers/LessonsStatusChangedPublisher';
 
-/**every 5 mintues check which lessons should have status of ongoing or completed
+/**every 45 mintues check which lessons should have status of ongoing or completed
  * and update them accordingly
  * 
  * lessons with status set to cancelled should not be updated
  */
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/45 * * * *', async () => {
 
     console.log('Running lesson status update task...');
 

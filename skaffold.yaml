@@ -13,6 +13,7 @@ build:
       context: users
       docker:
         dockerfile: dockerfile
+        target: dev
       sync:
         manual:
           - src: "src/**/*.ts"
@@ -21,6 +22,7 @@ build:
       context: reset-password
       docker:
         dockerfile: dockerfile
+        target: dev
       sync:
         manual:
           - src: "src/**/*.ts"
@@ -29,6 +31,7 @@ build:
       context: shifts
       docker:
         dockerfile: dockerfile
+        target: dev
       sync:
         manual:
           - src: "src/**/*.ts"
@@ -45,6 +48,7 @@ build:
       context: subjects
       docker:
         dockerfile: dockerfile
+        target: dev
       sync:
         manual:
           - src: "src/**/*.ts"
@@ -53,6 +57,7 @@ build:
       context: courses
       docker: 
         dockerfile: dockerfile
+        target: dev
       sync:
         manual:
           - dest: .
@@ -61,6 +66,7 @@ build:
       context: attendance
       docker: 
         dockerfile: dockerfile
+        target: dev
       sync:
         manual:
           - dest: .
@@ -69,6 +75,7 @@ build:
       context: materials
       docker: 
         dockerfile: dockerfile
+        target: dev
       sync:
         manual:
           - dest: .

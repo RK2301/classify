@@ -1,11 +1,49 @@
-FROM node:18-alpine
+## Dockerfile for Node.js application with multi-stage builds
+# To build development image: docker build --target dev -t 20011005/image-name:dev .
+# To build production image: docker build -t 20011005/image-name:latest .
 
+# ---------- deps: install all deps for building ----------
+FROM node:18-alpine AS deps
 WORKDIR /app
+# copy lockfile first for cached installs
+COPY package.json package-lock.json ./
+RUN npm ci
 
-COPY package.json .
-
-RUN npm install
-
+# ---------- builder: copy source + build (uses dev deps if needed) ----------
+FROM node:18-alpine AS builder
+WORKDIR /app
+# reuse installed node_modules from deps
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# run the build (adjust if your script name differs)
+RUN npm run build
 
+# ---------- dev stage: useful for local/dev images (optional) ----------
+FROM node:18-alpine AS dev
+WORKDIR /app
+ENV NODE_ENV=development
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
 CMD ["npm", "run", "start:dev"]
+
+# ---------- runner: production runtime (final stage) ----------
+FROM node:18-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Install ONLY production dependencies
+COPY package.json package-lock.json ./
+RUN npm ci --only=production
+
+# Copy built artifact from builder
+# <-- ADJUST the path below to your project's build output:
+# - Express/TS common: dist
+# - Next.js: .next and public (if server-side)
+# - CRA: build
+COPY --from=builder /app/dist ./dist
+# copy package.json (for npm start scripts) or any runtime files
+COPY --from=builder /app/package.json ./package.json
+
+# runtime command for prod
+CMD ["npm", "start"]
