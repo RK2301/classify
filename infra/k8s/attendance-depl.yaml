@@ -53,7 +53,7 @@ metadata:
 spec:
   selector:
     app: attendance
-  type: ClusterIP
+  type: ClusterIP 
   ports:
   - port: 3000
     targetPort: 3000
