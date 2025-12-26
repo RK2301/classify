@@ -30,6 +30,11 @@ spec:
       containers:
       - name: courses-mysql
         image: mysql
+        resources:
+          requests:
+            memory: "256Mi"
+          limits:
+            memory: "512Mi"
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
