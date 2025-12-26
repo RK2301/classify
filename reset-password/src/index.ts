@@ -68,5 +68,5 @@ app.listen(3000, () => {
     startMYSQL()
     startRabbitMQ()
     start()
-    console.log('reset-password service listen at port: 3000');
+    console.log('reset-password service listen at port 3000!!');
 })
