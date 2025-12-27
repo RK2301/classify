@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: api.classify26.live
+    - host: wwww.classify26.live
       http:
         paths:
           - path: /api/materials/?(.*)
@@ -88,7 +88,7 @@ kind: Service
 metadata:
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: 'true'
-    service.beta.kubernetes.io/do-loadbalancer-hostname: 'api.classify26.live'
+    service.beta.kubernetes.io/do-loadbalancer-hostname: 'www.classify26.live'
   labels:
     helm.sh/chart: ingress-nginx-2.0.3
     app.kubernetes.io/name: ingress-nginx
