@@ -15,5 +15,5 @@ jobs:
             - uses: digitalocean/action-doctl@v2
               with:
                   token: ${{secrets.DIGITALOCEAN_ACCESS_TOKEN}}
-            - run: doctl kubernetes cluster kubeconfig save 90a9707e-5bf2-495d-8f6f-72f011d2c3f4
+            - run: doctl kubernetes cluster kubeconfig save classify
             - run: kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod
