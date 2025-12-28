@@ -9,7 +9,7 @@ import { sequelize } from "../connect"
 /**This function is to add a new default manager (if not exists),
  * when the app start.
  * 
- * code will be excuted after 15sec after the service startup, to ensure connection with MYSQL and RabbitMQ
+ * code will be excuted after 2min (120sec) after the service startup, to ensure connection with MYSQL and RabbitMQ
  */
 export const defaultManager = (id: string, firstName: string, lastName: string,
     email: string) => {
@@ -56,5 +56,5 @@ export const defaultManager = (id: string, firstName: string, lastName: string,
             await t.rollback()
         }
 
-    }, 15 * 1000)
+    }, 120 * 1000)
 }
