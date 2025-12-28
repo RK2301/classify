@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: www.classify26.live
+    - host: api.classify26.live
       http:
         paths:
           - path: /api/materials/?(.*)
