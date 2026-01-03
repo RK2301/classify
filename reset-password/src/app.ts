@@ -1,5 +1,6 @@
 import express from 'express'
-import CookieSession from 'cookie-session'
+import CookieSession from 'cookie-session';
+import cors from 'cors';
 
 import { NotFoundError } from '@rkh-ms/classify-lib/errors'
 import { ClassifyErrorHandler, typesafe_i18n_middleware, errorHandler } from '@rkh-ms/classify-lib/middlewares'
@@ -11,6 +12,10 @@ import { resetRouter } from './routes/reset'
 const app = express()
 
 app.set('trust proxy', true)
+app.use(cors({
+    origin: ['https://classify26.live', 'https://classify.dev', 'http://localhost:3000'],
+    credentials: true,
+}))
 
 app.use(CookieSession({
     domain: process.env.NODE_ENV === 'production' ? '.classify26.live' : 'classify.dev',
