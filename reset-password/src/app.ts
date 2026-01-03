@@ -13,8 +13,10 @@ const app = express()
 app.set('trust proxy', true)
 
 app.use(CookieSession({
+    domain: process.env.NODE_ENV === 'production' ? '.classify26.live' : 'classify.dev',
     signed: false,
-    secure: true
+    secure: true,
+    sameSite: 'none'
 }))
 app.use(express.json())
 app.use(typesafe_i18n_middleware)
