@@ -35,6 +35,7 @@ app.use(cors({
 app.use(json())
 app.use(
     CookieSession({
+        domain: process.env.NODE_ENV === 'production' ? '.classify26.live' : 'classify.dev',
         secure: true,
         signed: false,
         sameSite: 'none', // 'lax' for production, 'none' for development with cross-origin requests
