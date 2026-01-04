@@ -20,9 +20,12 @@ import { updateMaterialRouter } from './routes/updateMaterial'
 
 const app = express()
 
+console.log('APP_ORIGIN is:');
+console.log(process.env.APP_ORIGIN);
+
 app.set('trust proxy', true)
 app.use(cors({
-    origin: ['https://classify.dev', 'http://localhost:3000'],
+    origin: [process.env.APP_ORIGIN!, 'http://localhost:3000'],
     credentials: true
 }))
 

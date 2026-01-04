@@ -26,6 +26,10 @@ spec:
       containers:
         - name: users
           image: 20011005/users
+          envFrom:
+            - configMapRef:
+                name: app-config
+                
           env:
             - name: MYSQL_HOST
               value: users-mysql-srv

@@ -11,14 +11,17 @@ import { resetRouter } from './routes/reset'
 
 const app = express()
 
+console.log('APP_ORIGIN, COOKIE_DOMAIN are:');
+console.log(process.env.APP_ORIGIN, process.env.COOKIE_DOMAIN);
+
 app.set('trust proxy', true)
 app.use(cors({
-    origin: ['https://classify26.live', 'https://classify.dev', 'http://localhost:3000'],
+    origin: [process.env.APP_ORIGIN!, 'http://localhost:3000'],
     credentials: true,
 }))
 
 app.use(CookieSession({
-    domain: process.env.NODE_ENV === 'production' ? '.classify26.live' : 'classify.dev',
+    domain: process.env.COOKIE_DOMAIN,
     signed: false,
     secure: true,
     sameSite: 'none'

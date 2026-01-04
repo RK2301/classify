@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_ORIGIN: "https://classify.dev"
+  COOKIE_DOMAIN: ".classify.dev"
