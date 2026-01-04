@@ -25,6 +25,10 @@ spec:
       containers:
         - name: subjects
           image: 20011005/subjects
+          envFrom:
+            - configMapRef:
+                name: app-config
+                
           env:
             - name: MYSQL_HOST
               value: subjects-mysql-srv

@@ -26,6 +26,10 @@ spec:
       containers:
         - name: shifts
           image: 20011005/shifts
+          envFrom:
+            - configMapRef:
+                name: app-config
+                
           env:
             - name: MYSQL_HOST
               value: shifts-mysql-srv

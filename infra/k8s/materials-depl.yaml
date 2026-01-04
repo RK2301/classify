@@ -26,6 +26,10 @@ spec:
       containers:
         - name: materials
           image: 20011005/materials
+          envFrom:
+            - configMapRef:
+                name: app-config
+                
           env:
             - name: MYSQL_HOST
               value: materials-mysql-srv
